@@ -1,0 +1,57 @@
+:root{--bg:#f8f6fb;--card:#fff;--text:#0f1724;--muted:#6b7280;--accent:#2563eb}
+.dark{--bg:#071127;--card:#071a2b;--text:#e6eef8;--muted:#94a3b8;--accent:#60a5fa}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);padding:20px;position:relative;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;position:relative;z-index:2}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.title{display:flex;gap:12px;align-items:baseline}
+h1{margin:0;font-size:22px}
+.subtitle{color:var(--muted);font-size:13px}
+
+.controls{display:flex;gap:12px;align-items:center}
+.input{padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);min-width:260px}
+.btn{background:var(--accent);color:white;padding:9px 12px;border-radius:8px;border:0;cursor:pointer}
+.btn.secondary{background:transparent;border:1px solid rgba(0,0,0,0.08);color:var(--text)}
+
+.topRow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.leftCol{flex:1}
+.rightCol{width:360px}
+
+.hero{display:block;padding:18px}
+.hero .muted{color:var(--muted)}
+.rightHeader{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);}
+
+/* Support for hero background images (downloaded from freeiconspng.com into ./icons/) */
+.hero{position:relative;overflow:hidden;background-repeat:no-repeat;background-position:right center;background-size:260px;background-color:var(--card)}
+.hero::after{content:'';position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));pointer-events:none}
+.hero .content{position:relative;z-index:2}
+
+.btn.secondary[data-metric]{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 8px}
+.btn.secondary[data-metric].active{background:var(--accent);color:white;border-color:transparent}
+
+#hourChart{width:100%!important}
+
+/* news card removed */
+
+
+.card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 1px 6px rgba(2,6,23,0.06);}
+.current{display:flex;gap:12px;align-items:center}
+.current .main{font-weight:700;font-size:28px}
+.muted{color:var(--muted);font-size:13px}
+
+.forecast{display:flex;gap:10px;margin-top:12px;overflow:auto}
+.day{min-width:110px;background:rgba(0,0,0,0.03);padding:8px;border-radius:8px;text-align:center}
+.day img{width:48px;height:48px}
+
+.main{font-size:36px}
+
+footer{margin-top:14px;color:var(--muted);font-size:13px}
+
+.small{font-size:12px;color:var(--muted)}
+
+@media (max-width:800px){.topRow{flex-direction:column}.rightCol{width:100%}}
+
+/* Decorative background, parachute toys, and background-video styles removed
+   to restore the previous visual state per user request. */
+
+

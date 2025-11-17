@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Weather Report</title>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+	<div class="container" id="app">
+		<header>
+			<div class="title">
+				<div style="font-size:26px">🌤</div>
+				<div>
+					<h1>Weather Report</h1>
+					<div class="subtitle">Forecast of the week • Search and compare — enter City or Country</div>
+				</div>
+			</div>
+
+			<div class="controls">
+				<label style="display:flex;align-items:center;gap:8px">
+					<input id="darkToggle" type="checkbox"/> <span class="small">Dark</span>
+				</label>
+			</div>
+		</header>
+
+
+
+		<div class="topRow">
+			<div class="leftCol">
+				<!-- Hero current weather (big temp + small chart placeholder) -->
+				<div class="hero card" id="hero">
+					<div style="display:flex;align-items:center;gap:18px">
+						<div style="font-size:52px;font-weight:700" id="heroTemp">—</div>
+						<div>
+							<div id="heroPlace" style="font-weight:700">—</div>
+							<div class="muted" id="heroCond">—</div>
+						</div>
+						<img id="heroIcon" src="" alt="" width="84" height="84" style="display:none">
+					</div>
+					<div style="margin-top:12px" id="chartPlaceholder"> <!-- small placeholder for graph -->
+						<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+							<button class="btn secondary" data-metric="temp">Temperature</button>
+							<button class="btn secondary" data-metric="pop">Precipitation</button>
+							<button class="btn secondary" data-metric="wind">Wind</button>
+							<div class="small" style="margin-left:auto">Next 24 hours</div>
+						</div>
+						<canvas id="hourChart" height="80"></canvas>
+					</div>
+				</div>
+
+				<!-- inputs -->
+				<div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+				<div style="display:flex;gap:8px;align-items:center">
+					<input id="q" class="input" type="text" placeholder="Enter city or country (e.g. Tokyo, Japan)" />
+						<button id="googleSearch" class="btn">Search (Google)</button>
+
+
+						<button id="getWeather" class="btn">Get Weather</button>
+						<button id="clear" class="btn secondary">Clear</button>
+					</div>
+
+					<!-- API key removed (prompt will appear when fetching weather) -->
+
+				<div id="notice" class="small" style="margin-top:8px"></div>
+
+				<div id="weatherSection" style="margin-top:12px"></div>
+			</div>
+
+			<div class="rightCol">
+				<div class="card rightHeader">
+					<div style="text-align:right">
+						<div style="font-size:20px;font-weight:700">Weather</div>
+						<div id="rightTime" class="muted">—</div>
+						<div id="rightCond" style="font-size:15px;margin-top:6px">—</div>
+					</div>
+				</div>
+				
+				<div class="card" style="margin-top:12px">
+					<div style="display:flex;justify-content:space-between;align-items:center">
+						<div>
+							<div class="muted">Country / City</div>
+							<div id="place" style="font-weight:700;">—</div>
+						</div>
+						<div style="text-align:right">
+							<div class="muted">Summary</div>
+							<div id="lastUpdated" style="font-weight:600">—</div>
+						</div>
+					</div>
+
+					<hr style="margin:12px 0;border:none;border-top:1px solid rgba(0,0,0,0.06)">
+
+					<div class="current">
+						<div>
+							<div class="muted">Temperature</div>
+							<div id="temp" class="main">—</div>
+						</div>
+						<div style="margin-left:auto;text-align:right">
+							<img id="icon" src="" alt="icon" width="72" height="72" style="display:none">
+							<div id="cond" class="muted">—</div>
+						</div>
+					</div>
+
+					<div style="display:flex;gap:12px;margin-top:12px">
+						<div class="small"><strong>💨 Humidity:</strong> <span id="humidity">—</span></div>
+						<div class="small"><strong>🌬 Wind:</strong> <span id="wind">—</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<section style="margin-top:14px">
+			<div class="card">
+				<h3 style="margin:0 0 8px 0">Weekly Forecast</h3>
+				<div id="forecast" class="forecast"></div>
+			</div>
+		</section>
+
+    
+
+		<footer>
+			<div class="small">Tip: You can also click "Search (Google)" to open Google Weather search results for your query.</div>
+		</footer>
+	</div>
+
+	<script src="app.js"></script>
+</body>
+</html>
+

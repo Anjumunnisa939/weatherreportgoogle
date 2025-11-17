@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Weather Report — React Example</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React + ReactDOM + Babel for in-browser JSX -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- App (JSX) -->
+  <script type="text/babel">
+  const { useState, useRef, useEffect } = React;
+
+  function App(){
+    const [q, setQ] = useState('');
+    const [key, setKey] = useState(localStorage.getItem('OWM_KEY') || '');
+    const [data, setData] = useState(null);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const chartRef = useRef(null);
+    const chartObj = useRef(null);
+
+    useEffect(()=>{ if(key) localStorage.setItem('OWM_KEY', key); }, [key]);
+
+    async function fetchWeather(){
+      setError('');
+      setLoading(true);
+      const k = key || (await new Promise(r => { const k = prompt('Enter OpenWeatherMap API key'); r(k||''); }));
+      if(!k){ setError('API key is required'); setLoading(false); return; }
+      try{
+        // geocode
+        const g = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid=${k}`);
+        if(g.status===401){ setError('Invalid API key (401)'); setLoading(false); return; }
+        if(!g.ok){ setError('Geocoding failed ('+g.status+')'); setLoading(false); return; }
+        const geo = await g.json(); if(!geo || !geo.length){ setError('Location not found'); setLoading(false); return; }
+        const loc = geo[0];
+        const w = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${loc.lat}&lon=${loc.lon}&exclude=minutely,alerts&units=metric&appid=${k}`);
+        if(w.status===401){ setError('Invalid API key (401) when fetching weather'); setLoading(false); return; }
+        if(!w.ok){ setError('Weather fetch failed ('+w.status+')'); setLoading(false); return; }
+        const jw = await w.json();
+        setData({ place: [loc.name, loc.state, loc.country].filter(Boolean).join(', '), raw: jw });
+        setKey(k);
+      }catch(e){ setError('Network or CORS error: '+e.message); }
+      setLoading(false);
+    }
+
+    useEffect(()=>{
+      if(!data) return;
+      // render hourly chart
+      const ctx = chartRef.current.getContext('2d');
+      const hourly = (data.raw.hourly||[]).slice(0,24);
+      const labels = hourly.map(h=> new Date(h.dt*1000).getHours()+':00');
+      const temps = hourly.map(h=> Math.round(h.temp));
+      if(chartObj.current) chartObj.current.destroy();
+      chartObj.current = new Chart(ctx, { type:'line', data:{ labels, datasets:[{ data:temps, borderColor:'#60a5fa', backgroundColor:'rgba(96,165,250,0.12)', tension:0.3, fill:true }] }, options:{ plugins:{ legend:{display:false} }, scales:{ x:{display:false}, y:{display:false} } } });
+    }, [data]);
+
+    return (<div className="react-app">
+      <h1>Weather (React)</h1>
+      <div className="controls">
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="City or City,Country" />
+        <input value={key} onChange={e=>setKey(e.target.value)} placeholder="OpenWeatherMap API key" />
+        <button onClick={fetchWeather} disabled={loading}>Get Weather</button>
+        <button onClick={()=>{ setKey(''); localStorage.removeItem('OWM_KEY'); setData(null); setError(''); }}>Clear Key</button>
+      </div>
+
+      {error && <div className="error">Error: {error}</div>}
+
+      {data && <div className="result">
+        <div className="hero">
+          <div className="left">
+            <div className="temp">{Math.round(data.raw.current.temp)}°C</div>
+            <div className="cond">{data.raw.current.weather && data.raw.current.weather[0] ? data.raw.current.weather[0].description : ''}</div>
+            <div className="meta">Humidity: {data.raw.current.humidity}% • Wind: {data.raw.current.wind_speed} m/s</div>
+            <canvas ref={chartRef} id="reactHourChart" height="80"></canvas>
+          </div>
+          <div className="right">
+            <div className="place">{data.place}</div>
+            <div className="time">{new Date(data.raw.current.dt*1000).toLocaleString()}</div>
+          </div>
+        </div>
+
+        <h3>7-day forecast</h3>
+        <div className="days">{(data.raw.daily||[]).slice(0,7).map((d,i)=>(
+          <div key={i} className="day">
+            <div>{new Date(d.dt*1000).toLocaleDateString(undefined,{weekday:'short'})}</div>
+            <div className="dtemp">{Math.round(d.temp.max)}° / {Math.round(d.temp.min)}°</div>
+          </div>
+        ))}</div>
+      </div>}
+    </div>);
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
